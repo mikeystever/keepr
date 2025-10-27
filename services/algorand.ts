@@ -1,5 +1,5 @@
 import algosdk from 'algosdk';
-import { BountyBoardState } from '../types';
+import { BountyBoardState } from '../types.ts';
 import { Buffer } from 'buffer';
 import { AlgorandClient } from '@algorandfoundation/algokit-utils';
 

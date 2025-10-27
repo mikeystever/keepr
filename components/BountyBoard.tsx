@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { readBountyBoardState } from '../services/algorand';
-import { BountyBoardState } from '../types';
+import { readBountyBoardState } from '../services/algorand.ts';
+import { BountyBoardState } from '../types.ts';
 
 interface BountyBoardProps {
   appId: number;

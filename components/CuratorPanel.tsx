@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as UseWallet from '@txnlab/use-wallet-react';
-import { AppState } from '../types';
-import { algorand, readBountyBoardState } from '../services/algorand';
+import { AppState } from '../types.ts';
+import { algorand, readBountyBoardState } from '../services/algorand.ts';
 import algosdk from 'algosdk';
 
 interface CuratorPanelProps {

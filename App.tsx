@@ -1,12 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import * as UseWallet from '@txnlab/use-wallet-react';
 
-import { AppState, Notification } from './types';
-import Header from './components/Header';
-import ConfigSetup from './components/ConfigSetup';
-import CuratorPanel from './components/CuratorPanel';
-import BountyBoard from './components/BountyBoard';
-import NotificationToast from './components/NotificationToast';
+import { AppState, Notification } from './types.ts';
+import Header from './components/Header.tsx';
+import ConfigSetup from './components/ConfigSetup.tsx';
+import CuratorPanel from './components/CuratorPanel.tsx';
+import BountyBoard from './components/BountyBoard.tsx';
+import NotificationToast from './components/NotificationToast.tsx';
+import HelpModal from './components/HelpModal.tsx';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>({
@@ -15,25 +16,24 @@ export default function App() {
   });
   const [notification, setNotification] = useState<Notification | null>(null);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const network = 'testnet';
   const algodConfig = {
     baseServer: 'https://testnet-api.algonode.cloud',
-    port: '443',
+    port: 443, // Use number for port
     token: '',
   };
 
-  const walletManager = new UseWallet.WalletManager({
-    wallets: [
-      { id: UseWallet.WalletId.PERA },
-    ],
+  const walletManager = useMemo(() => new UseWallet.WalletManager({
+    wallets: [UseWallet.WalletId.PERA],
     defaultNetwork: network,
     networks: {
       [network]: {
         algod: algodConfig,
       },
     },
-  });
+  }), []);
 
   const showNotification = useCallback((message: string, type: 'success' | 'error') => {
     setNotification({ message, type });
@@ -51,7 +51,7 @@ export default function App() {
   return (
     <UseWallet.WalletProvider manager={walletManager}>
       <div className="min-h-screen bg-grantkeepr-dark text-gray-100 font-sans">
-        <Header />
+        <Header onHelpClick={() => setIsHelpModalOpen(true)} />
         <main className="container mx-auto p-4 md:p-8">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center">
@@ -76,6 +76,7 @@ export default function App() {
             onDismiss={() => setNotification(null)}
           />
         )}
+        <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
       </div>
     </UseWallet.WalletProvider>
   );
