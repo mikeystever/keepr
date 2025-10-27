@@ -1,0 +1,5 @@
+{
+  "name": "GrantKeepr Protocol POC",
+  "description": "A Proof of Concept for the GrantKeepr Protocol on Algorand Testnet, demonstrating wallet connection, asset creation, and a minimal viable staking interaction to launch a Token-Curated Registry (TCR).",
+  "requestFramePermissions": []
+}

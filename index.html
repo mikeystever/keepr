@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GrantKeepr Protocol POC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'algorand-blue': '#0070E0',
+              'algorand-dark-blue': '#003D7A',
+              'grantkeepr-dark': '#1a202c',
+              'grantkeepr-gray': '#2d3748',
+              'grantkeepr-light-gray': '#4a5568',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "buffer": "https://aistudiocdn.com/buffer@^6.0.3",
+    "algosdk": "https://aistudiocdn.com/algosdk@^3.5.2",
+    "@txnlab/use-wallet-react": "https://aistudiocdn.com/@txnlab/use-wallet-react@^4.3.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-grantkeepr-dark text-white">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
