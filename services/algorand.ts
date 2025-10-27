@@ -3,12 +3,18 @@ import { BountyBoardState } from '../types';
 import { Buffer } from 'buffer';
 import { AlgorandClient } from '@algorandfoundation/algokit-utils';
 
-const ALGOD_SERVER = 'https://testnet-api.algonode.cloud';
-const ALGOD_TOKEN = '';
-const ALGOD_PORT = 443;
+const algodConfig = {
+  server: 'https://testnet-api.algonode.cloud',
+  port: '443',
+  token: '',
+};
 
-export const ALGOD_CLIENT = new algosdk.Algodv2(ALGOD_TOKEN, ALGOD_SERVER, ALGOD_PORT);
-export const algorand = AlgorandClient.fromClients({ algod: ALGOD_CLIENT });
+// Use AlgoKit utils to create a robust Algorand client instance
+export const algorand = AlgorandClient.fromConfig({ algodConfig });
+
+// Export the underlying algod client for components that need direct access
+export const ALGOD_CLIENT = algorand.client.algod;
+
 
 // Helper to parse global state
 const parseGlobalState = (state: any[]): Map<string, number> => {
