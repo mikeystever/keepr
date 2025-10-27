@@ -1,7 +1,5 @@
-
 import React, { useState, useCallback } from 'react';
 import * as UseWallet from '@txnlab/use-wallet-react';
-import algosdk from 'algosdk';
 
 import { AppState, Notification } from './types';
 import Header from './components/Header';
@@ -9,7 +7,6 @@ import ConfigSetup from './components/ConfigSetup';
 import CuratorPanel from './components/CuratorPanel';
 import BountyBoard from './components/BountyBoard';
 import NotificationToast from './components/NotificationToast';
-import { ALGOD_CLIENT } from './services/algorand';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>({
@@ -19,32 +16,23 @@ export default function App() {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [refreshCounter, setRefreshCounter] = useState(0);
 
-  const providers = UseWallet.useInitializeProviders({
-    providers: [
-      {
-        id: 'pera',
-        options: {
-          client: {
-            metadata: {
-              name: 'GrantKeepr POC',
-              description: 'GrantKeepr Protocol Proof of Concept',
-              url: '#',
-              icons: ['https://path/to/image.png'],
-            },
-            algosdk,
-            algod: ALGOD_CLIENT,
-          },
-          shouldShowSignTxnToast: true,
-        },
-      },
+  const network = 'testnet';
+  const algodConfig = {
+    baseServer: 'https://testnet-api.algonode.cloud',
+    port: '443',
+    token: '',
+  };
+
+  const walletManager = new UseWallet.WalletManager({
+    wallets: [
+      { id: UseWallet.WalletId.PERA },
     ],
-    nodeConfig: {
-      network: 'testnet',
-      nodeServer: 'https://testnet-api.algonode.cloud',
-      nodeToken: '',
-      nodePort: '443',
+    defaultNetwork: network,
+    networks: {
+      [network]: {
+        algod: algodConfig,
+      },
     },
-    algosdk,
   });
 
   const showNotification = useCallback((message: string, type: 'success' | 'error') => {
@@ -61,7 +49,7 @@ export default function App() {
   }, []);
 
   return (
-    <UseWallet.WalletProvider value={providers}>
+    <UseWallet.WalletProvider manager={walletManager}>
       <div className="min-h-screen bg-grantkeepr-dark text-gray-100 font-sans">
         <Header />
         <main className="container mx-auto p-4 md:p-8">
