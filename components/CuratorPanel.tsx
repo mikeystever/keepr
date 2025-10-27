@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as UseWallet from '@txnlab/use-wallet-react';
 import { AppState } from '../types';
-import { createStakeTransaction, ALGOD_CLIENT, readBountyBoardState } from '../services/algorand';
+import { algorand, readBountyBoardState } from '../services/algorand';
 import algosdk from 'algosdk';
 
 interface CuratorPanelProps {
@@ -41,20 +41,29 @@ const CuratorPanel: React.FC<CuratorPanelProps> = ({ appState, showNotification,
     }
 
     setIsLoading(true);
+    algorand.setDefaultSigner(transactionSigner);
+    
     try {
-      const txnsToSign = await createStakeTransaction(
-        activeAddress,
-        appState.appId,
-        appState.assetId,
-        stakeAmount
-      );
+      const appAddress = algosdk.getApplicationAddress(appState.appId);
+      // Assuming 6 decimals for the ASA from the previous implementation
+      const stakeAmountInSmallestUnit = stakeAmount * 1_000_000;
 
-      const signedTxns = await transactionSigner(txnsToSign);
-      // FIX: The response object from `sendRawTransaction` has a `txid` property (lowercase).
-      const { txid } = await ALGOD_CLIENT.sendRawTransaction(signedTxns).do();
-      await algosdk.waitForConfirmation(ALGOD_CLIENT, txid, 4);
+      const result = await algorand.newGroup()
+        .addAssetTransfer({
+          sender: activeAddress,
+          receiver: appAddress,
+          assetId: appState.assetId,
+          amount: stakeAmountInSmallestUnit,
+        })
+        .addAppCall({
+          sender: activeAddress,
+          appId: appState.appId,
+          onComplete: 'optin',
+          args: ["stake_deposit"]
+        })
+        .execute();
 
-      showNotification(`Successfully staked ${stakeAmount} KEEPR! TxID: ${txid.slice(0,10)}...`, 'success');
+      showNotification(`Successfully staked ${stakeAmount} KEEPR! TxID: ${result.txIds[0].slice(0,10)}...`, 'success');
       onStakeSuccess();
     } catch (error: any) {
       console.error(error);
